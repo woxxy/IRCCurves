@@ -128,12 +128,12 @@ public class P_Queue implements IPeriodicHandler {
 			if (userQueue.size() >= queueLength)
 				throw new Exception();
 			if (userQueue.contains(newItem)){
-				log.info(newItem.getFile().getName() + " is already in "
+				log.info(newItem.getFile() + " is already in "
 						+ newItem.getUser().getNickname() + "'s download queue.");
 				return true;		
 			}
 			userQueue.add(newItem);
-			log.info(newItem.getFile().getName() + " is added to "
+			log.info(newItem.getFile() + " is added to "
 					+ newItem.getUser().getNickname() + "'s download queue.");
 		} catch (Exception e) {
 			log.debug(newItem.getUser().getNickname()

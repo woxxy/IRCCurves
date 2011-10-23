@@ -8,6 +8,8 @@ import java.util.Hashtable;
 import java.io.*;
 
 import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import com.mysql.jdbc.PreparedStatement;
 
@@ -46,15 +48,33 @@ public class DCCSend extends Thread {
 
 	public DCCSend(SendItem item, P_Queue transferQueue) {
 		this.transferQueue = transferQueue;
+		log.error("here");
 		init(item.getBot(), item.getUser(), item.getStorage());
-		if (!openFile(item.getFile())) {
+		
+		// massive FoOlSlide action
+		try {
+			log.error("php /var/www/slide/index.php " + item);
+            Runtime rt = Runtime.getRuntime();
+            Process pr = rt.exec("php /var/www/slide/index.php " + item);
+
+            BufferedReader input = new BufferedReader(new InputStreamReader(pr.getInputStream()));
+            String path = input.readLine(); // single line with file location
+
+            File file = new File(path);
+        } catch(Exception e) {
+            System.out.println(e.toString());
+            e.printStackTrace();
+            return;
+        }
+        
+		if (!openFile(file)) {
 			log.warn("Could not open file ("
-					+ item.getFile().getAbsolutePath() + ")");
+					+ item + ")");
 			return;
 		}
 		if (!openServerSocket()){
 			log.warn("Could not open server socket ("
-					+ item.getFile().getAbsolutePath() + ")");
+					+ item + ")");
 			return;
 		}
 	}

@@ -12,7 +12,7 @@ public class SendItem {
 		return bot;
 	}
 
-	public File getFile() {
+	public String getFile() {
 		return file;
 	}
 
@@ -25,11 +25,11 @@ public class SendItem {
 	}
 
 	private Bot bot;
-	private File file;
+	private String file;
 	private Hashtable<String, Object> storage;
 	private Profile user;
 
-	public SendItem(File file, Profile user, Bot bot,
+	public SendItem(String file, Profile user, Bot bot,
 			Hashtable<String, Object> storage) {
 		this.file = file;
 		this.storage = storage;
@@ -37,9 +37,7 @@ public class SendItem {
 		this.user = user;
 	}
 	
-	public static SendItem newItem(File file, Profile user, Bot bot,
-			Hashtable<String, Object> storage){
-		if (!file.exists()) return null;
+	public static SendItem newItem(String file, Profile user, Bot bot, Hashtable<String, Object> storage){
 		return new SendItem(file, user, bot, storage);
 	}
 	
@@ -49,4 +47,5 @@ public class SendItem {
 		SendItem oi = (SendItem) o;
 		return (oi.file.equals(this.file) && oi.user.equals(this.user));
 	}
+
 }

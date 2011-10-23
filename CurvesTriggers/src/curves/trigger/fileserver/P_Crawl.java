@@ -1,11 +1,18 @@
 package curves.trigger.fileserver;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.json.JSONObject;
+
+import org.json.*;
 
 import curves.main.Bot;
 import curves.trigger.IPeriodicHandler;
@@ -15,7 +22,7 @@ public class P_Crawl implements IPeriodicHandler {
 	int skip = 0;
 	Logger log = Logger.getLogger(P_Crawl.class);
 
-	ArrayList<String> filelist;
+	HashMap<String, String> filelist;
 	String[] extensions;
 	String root;
 	long latestDate = 0;
@@ -27,13 +34,11 @@ public class P_Crawl implements IPeriodicHandler {
 	}
 
 	public void process(Bot bot, Hashtable<String, Object> storage) {
-		root = (String) storage.get("file root");
-		extensions = ((String) storage.get("file extensions")).split("|");
-		filelist = new ArrayList<String>();
-		traverse(new File(root));
+		filelist = new HashMap<String, String>();
+		traverse();
 		storage.put("file list", filelist);
 		storage.put("latest file", latestFile);
-		log.info(filelist.size() + " file(s) found in " + root);
+		log.info(filelist.size() + " file(s) found");
 		log.info("The newest file is " + latestFile);
 	}
 
@@ -44,28 +49,60 @@ public class P_Crawl implements IPeriodicHandler {
 		}
 		return false;
 	}
+	
+	public void traverse() {
+		traverse(1);
+	}
 
-	public void traverse(File directory) {
-		File[] files = directory.listFiles();
-		String filename = "";
-		for (File file : files) {
-			if (file.isDirectory()) {
-				traverse(file);
-			} else {
-				try {
-					filename = file.getCanonicalPath();
-					if (!checkExtension(filename))
-						continue;
-					filename = filename.replace(root, "");
-					filelist.add(filename);
-					if (file.lastModified() > latestDate){
-						latestDate = file.lastModified();
-						latestFile = filename;
-					}
-				} catch (IOException e) {
-					log.error("Traversing file tree failed.", e);
-				}
-			}
-		}
+	public void traverse(int page) {
+		try {
+            Runtime rt = Runtime.getRuntime();
+            Process pr = rt.exec("php /var/www/slide/index.php api reader chapters orderby desc_created per_page 100 page " + page);
+
+            BufferedReader input = new BufferedReader(new InputStreamReader(pr.getInputStream()));
+
+            String line = input.readLine();
+            JSONObject obj = new JSONObject(line);
+            
+            if(obj.has("error"))
+            {
+            	return;
+            }
+            
+            JSONArray chapters_arr = obj.getJSONArray("chapters");
+            
+            for(int i = 0; i < chapters_arr.length(); i++)
+            {
+            	String search_line = "";
+            	String request_line = "";
+            	JSONObject chapter_obj = chapters_arr.getJSONObject(i).getJSONObject("chapter");
+            	JSONObject comic_obj = chapters_arr.getJSONObject(i).getJSONObject("comic");
+            	JSONArray teams_arr = chapters_arr.getJSONObject(i).getJSONArray("teams");
+            	search_line = "Series: " + comic_obj.getString("name") + "; Chapter " + chapter_obj.getInt("chapter");
+            	if(chapter_obj.getInt("subchapter") > 0)
+            		search_line += "." + chapter_obj.getInt("subchapter");
+            	if(chapter_obj.getString("name").length() > 0)
+            		search_line += " : " + chapter_obj.getString("name");
+            	
+            	request_line = chapter_obj.getString("href");
+            	request_line.replaceFirst("http://foolrulez.org/slide/", "");
+            	request_line.replace("/", " ");
+            	filelist.put(search_line, request_line);
+            	log.debug(search_line);
+            	if(i == 0 && page == 1)
+            	{
+            		latestFile = search_line;
+            	}
+            	
+            	if(i == 99)
+            	{
+            		traverse(++page);
+            	}
+            }
+            
+
+        } catch(Exception e) {
+            log.error(e.toString());
+        }
 	}
 }

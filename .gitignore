@@ -1,0 +1,9 @@
+.DS_Store 
+*.pyc
+.svn
+nbproject
+Thumbs.db
+Desktop.ini
+CurvesTriggers/bin/
+Curves/bin/
+upload.rexpfd
