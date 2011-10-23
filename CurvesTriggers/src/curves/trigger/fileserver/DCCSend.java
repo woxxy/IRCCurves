@@ -4,6 +4,7 @@ import java.net.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.io.*;
 
@@ -46,21 +47,21 @@ public class DCCSend extends Thread {
 	private int delay;
 	private P_Queue transferQueue;
 
+	@SuppressWarnings("unchecked")
 	public DCCSend(SendItem item, P_Queue transferQueue) {
 		this.transferQueue = transferQueue;
-		log.error("here");
 		init(item.getBot(), item.getUser(), item.getStorage());
 		
 		// massive FoOlSlide action
 		try {
-			log.error("php /var/www/slide/index.php " + item);
+			HashMap<String, String> filelist = (HashMap<String, String>) storage.get("file list");
+			String command = filelist.get(item.getFile());
             Runtime rt = Runtime.getRuntime();
-            Process pr = rt.exec("php /var/www/slide/index.php " + item);
+            Process pr = rt.exec("php /var/www/slide/index.php " + command);
 
             BufferedReader input = new BufferedReader(new InputStreamReader(pr.getInputStream()));
             String path = input.readLine(); // single line with file location
-
-            File file = new File(path);
+            file = new File(path);
         } catch(Exception e) {
             System.out.println(e.toString());
             e.printStackTrace();

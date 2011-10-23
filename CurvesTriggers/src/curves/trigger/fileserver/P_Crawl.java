@@ -78,15 +78,26 @@ public class P_Crawl implements IPeriodicHandler {
             	JSONObject chapter_obj = chapters_arr.getJSONObject(i).getJSONObject("chapter");
             	JSONObject comic_obj = chapters_arr.getJSONObject(i).getJSONObject("comic");
             	JSONArray teams_arr = chapters_arr.getJSONObject(i).getJSONArray("teams");
-            	search_line = "Series: " + comic_obj.getString("name") + "; Chapter " + chapter_obj.getInt("chapter");
+            	search_line = "Series: " + comic_obj.getString("name") + " - ";
+            	if(chapter_obj.getInt("volume") > 0)
+            		search_line += "Volume " + chapter_obj.getInt("subchapter") + ", ";
+            	search_line += "Chapter " + chapter_obj.getInt("chapter");
             	if(chapter_obj.getInt("subchapter") > 0)
             		search_line += "." + chapter_obj.getInt("subchapter");
             	if(chapter_obj.getString("name").length() > 0)
             		search_line += " : " + chapter_obj.getString("name");
             	
-            	request_line = chapter_obj.getString("href");
-            	request_line.replaceFirst("http://foolrulez.org/slide/", "");
-            	request_line.replace("/", " ");
+            	search_line += " by ";
+            	for(int j = 0; j < teams_arr.length(); j++)
+            	{
+            		search_line += teams_arr.getJSONObject(j).getString("name");
+            		if(j < teams_arr.length() - 1)
+            			search_line += ", ";
+            	}
+            	
+            	request_line = chapter_obj.getString("download_href");
+            	request_line = request_line.replaceFirst("http://localhost/", "");
+            	request_line = request_line.replace("/", " ");
             	filelist.put(search_line, request_line);
             	log.debug(search_line);
             	if(i == 0 && page == 1)
