@@ -8,6 +8,7 @@ import org.apache.log4j.Logger;
 import com.mysql.jdbc.PreparedStatement;
 
 import curves.main.Bot;
+import curves.main.DatabaseFactory;
 import curves.trigger.IPeriodicHandler;
 
 public class P_Archive implements IPeriodicHandler {
@@ -26,13 +27,13 @@ public class P_Archive implements IPeriodicHandler {
 			ps = (PreparedStatement) bot
 					.getDB()
 					.prepareStatement(
-							"INSERT IGNORE INTO messages_archive SELECT * FROM messages"
+							"INSERT IGNORE INTO " + DatabaseFactory.prefix_ + "curvesmessages_archive SELECT * FROM messages"
 									+ " WHERE date( time ) < subdate( curdate( ) , INTERVAL 2 month );");
 			ps.executeUpdate();
 			ps = (PreparedStatement) bot
 					.getDB()
 					.prepareStatement(
-							"DELETE FROM messages"
+							"DELETE FROM " + DatabaseFactory.prefix_ + "curvesmessages"
 									+ " WHERE date( time ) < subdate( curdate( ) , INTERVAL 2 month );");
 			ps.executeUpdate();
 			ps.close();

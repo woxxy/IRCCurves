@@ -15,6 +15,7 @@ import org.json.JSONObject;
 import com.mysql.jdbc.PreparedStatement;
 
 import curves.main.Bot;
+import curves.main.DatabaseFactory;
 import curves.main.Profile;
 import curves.message.PrivMsg;
 
@@ -224,7 +225,7 @@ public class DCCSend extends Thread {
 			PreparedStatement ps = (PreparedStatement) bot
 					.getDB()
 					.prepareStatement(
-							"INSERT INTO downloads (nickname, hostname, started, ended, file, transferred, completed)"
+							"INSERT INTO " + DatabaseFactory.prefix_ + "curvesdownloads (nickname, hostname, started, ended, file, transferred, completed)"
 									+ "VALUES (?, ?, ?, ?, ?, ?, ?);");
 			ps.setString(1, user.getNickname());
 			ps.setString(2, user.getHostname());

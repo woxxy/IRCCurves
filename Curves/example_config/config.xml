@@ -3,7 +3,7 @@
 		<!-- home folder of curves -->
 		<home>/usr/local/irccurves</home>
 		<main>curves.main.Main</main>
-		<!-- home folder of java 1.6 -->
+		<!-- home folder of java 1.6+ -->
 		<javahome>/usr/local/java</javahome>
 	</runtime>
 
@@ -33,6 +33,7 @@
 			</url>
 			<username>curves</username>
 			<password>password</password>
+			<password>cs_</password>
 		</database>
 		<!-- channels to join on start -->
 		<channels>
@@ -44,48 +45,48 @@
 			critical packages are triggered even when the system is under heavy load
 		-->
 		<listeners>
-			<index>
+			<listener>
 				<classpath>/usr/local/irccurves/CurvesTriggers/bin</classpath>
 				<classname>curves.trigger.system.Index</classname>
 				<properties>/usr/local/irccurves/CurvesTriggers/properties/system.xml
 				</properties>
 				<critical>true</critical>
-			</index>
-			<index>
+			</listener>
+			<listener>
 				<classpath>/usr/local/irccurves/CurvesTriggers/bin</classpath>
 				<classname>curves.trigger.record.Index</classname>
 				<critical>true</critical>
-			</index>
-			<index>
+			</listener>
+			<listener>
 				<classpath>/usr/local/irccurves/CurvesTriggers/bin</classpath>
 				<classname>curves.trigger.console.Index</classname>
 				<critical>true</critical>
-			</index>
-			<index>
+			</listener>
+			<listener>
 				<classpath>/usr/local/irccurves/CurvesTriggers/bin</classpath>
 				<classname>curves.trigger.fileserver.Index</classname>
 				<properties>/usr/local/irccurves/CurvesTriggers/properties/fileserver.xml
 				</properties>
 				<critical>true</critical>
-			</index>
-			<index>
+			</listener>
+			<listener>
 				<classpath>/usr/local/irccurves/CurvesTriggers/bin</classpath>
 				<classname>curves.trigger.query.Index</classname>
 				<properties>/usr/local/irccurves/CurvesTriggers/properties/query.xml
 				</properties>
-			</index>
-			<index>
+			</listener>
+			<listener>
 				<classpath>/usr/local/irccurves/CurvesTriggers/bin</classpath>
 				<classname>curves.trigger.foolrulez.Index</classname>
 				<properties>/usr/local/irccurves/CurvesTriggers/properties/foolrulez.xml
 				</properties>
-			</index>
-			<index>
+			</listener>
+			<listener>
 				<classpath>/usr/local/irccurves/CurvesTriggers/bin</classpath>
 				<classname>curves.trigger.mana.Index</classname>
 				<properties>/usr/local/irccurves/CurvesTriggers/properties/mana.xml
 				</properties>
-			</index>
+			</listener>
 		</listeners>
 		<!--
 			admins are identified by their nick and hostname

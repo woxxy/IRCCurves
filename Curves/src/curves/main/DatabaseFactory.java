@@ -11,13 +11,15 @@ public class DatabaseFactory {
 	public static String url_;
 	public static String username_;
 	public static String password_;
+	public static String prefix_;
 
 	static Logger log = Logger.getLogger(DatabaseFactory.class);
 
-	public static Connection New(String url, String username, String password) {
+	public static Connection New(String url, String username, String password, String prefix) {
 		url_ = url;
 		username_ = username;
 		password_ = password;
+		prefix_ = prefix;
 		return New();
 	}
 

@@ -1,6 +1,10 @@
 package curves.main;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -46,9 +50,31 @@ public class Main {
 
 	@SuppressWarnings("unchecked")
 	private static void loadConfigFile(String configFile) {
+		Boolean isFoOlSlide = false;
+		XMLConfiguration config = null;
+		
+		// check if it's a FoOlSlide
+		if(configFile.endsWith("index.php"))
+		{
+			try {
+	            Runtime rt = Runtime.getRuntime();
+	            Process pr = rt.exec("php " + configFile + " api irc_cli config format xml");
+	            config = new XMLConfiguration();
+	            config.load(pr.getInputStream());
+	            isFoOlSlide = true;
+	        } catch(Exception e) {
+	            System.out.println(e.toString());
+	            e.printStackTrace();
+	            return;
+	        }
+		}
+		
 		// parse configuration file
 		try {
-			XMLConfiguration config = new XMLConfiguration(configFile);
+			if(!isFoOlSlide)
+			{
+				config = new XMLConfiguration(configFile);
+			}
 			List<HierarchicalConfiguration> bots = config
 					.configurationsAt("bot");
 			
@@ -65,7 +91,8 @@ public class Main {
 				Connection database = DatabaseFactory.New(bot
 							.getString("database.url"), bot
 							.getString("database.username"), bot
-							.getString("database.password"));
+							.getString("database.password"), bot
+							.getString("database.prefix"));
 
 				Bot newBot = new Bot(bot.getString("server"), bot
 						.getInt("port"), profile, bot.getLong("period"),
@@ -75,7 +102,7 @@ public class Main {
 
 				// parse listeners
 				List<HierarchicalConfiguration> indexes = bot
-						.configurationsAt("listeners.index");
+						.configurationsAt("listeners.listener");
 				for (Iterator<HierarchicalConfiguration> iind = indexes
 						.iterator(); iind.hasNext();) {
 					HierarchicalConfiguration index = iind.next();
